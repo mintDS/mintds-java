@@ -1,5 +1,6 @@
 package com.arturmkrtchyan.mintds.client;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -11,7 +12,7 @@ import io.netty.util.CharsetUtil;
 
 import java.util.function.Supplier;
 
-public class MintDsClientInitializer extends ChannelInitializer<SocketChannel> {
+public class MintDsClientInitializer {
 
     private final StringDecoder stringDecoder = new StringDecoder(CharsetUtil.UTF_8);
     private final StringEncoder stringEncoder = new StringEncoder(CharsetUtil.UTF_8);
@@ -21,8 +22,7 @@ public class MintDsClientInitializer extends ChannelInitializer<SocketChannel> {
         this.handlerSupplier = handlerSupplier;
     }
 
-    @Override
-    protected void initChannel(SocketChannel ch) throws Exception {
+    protected void initChannel(Channel ch) {
 
         ChannelPipeline pipeline = ch.pipeline();
 
