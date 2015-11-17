@@ -14,8 +14,8 @@ import java.util.stream.IntStream;
 
 public class MintDsClient {
 
-    private static final int DEFAULT_THREADS = 1;
-    private static final int DEFAULT_CONNECTIONS = 16;
+    public static final int DEFAULT_THREADS = 1;
+    public static final int DEFAULT_CONNECTIONS = 16;
 
     private String host;
     private int port;
@@ -26,7 +26,10 @@ public class MintDsClient {
     private EventLoopGroup eventLoopGroup;
     private ChannelPool channelPool;
 
-    private MintDsClient() {}
+    private MintDsClient() {
+        numberOfThreads = DEFAULT_THREADS;
+        numberOfConnections = DEFAULT_CONNECTIONS;
+    }
 
     private void connect() throws Exception {
         eventLoopGroup = new NioEventLoopGroup(numberOfThreads);
@@ -56,8 +59,21 @@ public class MintDsClient {
     public void send(final String message) throws Exception {
         // Sends the message to the server.
         Channel channel = randomChannel();
+        MintDsCallback previous = channel.attr(MintDsChannelAttributeKey.CALLBACK).getAndSet(new MintDsCallback() {
+            @Override
+            public void onFailure(Throwable cause) {
+                cause.printStackTrace();
+            }
+
+            @Override
+            public void onSuccess(String msg) {
+                //System.out.println(msg);
+            }
+        });
+        if (previous != null) {
+            System.err.println("Internal error, completion handler should have been null");
+        }
         channel.writeAndFlush(message + "\r\n").sync();
-        channelPool.release(channel);
     }
 
     protected Channel randomChannel() {
@@ -91,15 +107,15 @@ public class MintDsClient {
         MintDsClient client = new MintDsClient.Builder()
                 .host("localhost")
                 .port(7657)
-                .numberOfConnections(128)
-                .numberOfThreads(4)
+                .numberOfConnections(512)
+                .numberOfThreads(8)
                 .build();
 
         long start = System.currentTimeMillis();
 
         client.send("create bloomfilter test");
 
-        IntStream.range(0, 1000).parallel().forEach(value -> {
+        IntStream.range(0, 100000).forEach(value -> {
             try {
                 client.send("add bloomfilter test mytestvalue"+value);
             } catch (Exception e) {
