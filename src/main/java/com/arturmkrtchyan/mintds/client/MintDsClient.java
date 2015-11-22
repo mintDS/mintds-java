@@ -49,7 +49,6 @@ public class MintDsClient {
         }, numberOfConnections);
 
 
-
     }
 
     public void disconnect() throws Exception {
@@ -117,7 +116,7 @@ public class MintDsClient {
 
         IntStream.range(0, 100000).forEach(value -> {
             try {
-                client.send("add bloomfilter test mytestvalue"+value);
+                client.send("add bloomfilter test mytestvalue" + value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
