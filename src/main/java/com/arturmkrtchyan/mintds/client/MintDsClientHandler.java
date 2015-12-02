@@ -1,5 +1,6 @@
 package com.arturmkrtchyan.mintds.client;
 
+import com.arturmkrtchyan.mintds.protocol.response.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.pool.ChannelPool;
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MintDsClientHandler extends SimpleChannelInboundHandler<String> {
+class MintDsClientHandler extends SimpleChannelInboundHandler<String> {
 
     private final static Logger logger = LoggerFactory.getLogger(MintDsClientHandler.class);
 
@@ -24,23 +25,19 @@ public class MintDsClientHandler extends SimpleChannelInboundHandler<String> {
 
         //System.out.println(msg);
 
-        Attribute<CompletableFuture<String>> futureAttribute = ctx.channel().attr(MintDsChannelAttributeKey.CALLBACK);
-        CompletableFuture<String> future = futureAttribute.getAndRemove();
+        Attribute<CompletableFuture<Response>> futureAttribute = ctx.channel().attr(MintDsClient.FUTURE);
+        CompletableFuture<Response> future = futureAttribute.getAndRemove();
         //System.out.println(ctx.channel().toString() + Thread.currentThread().getName() + " " + msg);
 
-
-        //Thread.sleep(100);
-
-
         channelPool.release(ctx.channel());
-        future.complete(msg);
+        future.complete(Response.fromString(msg));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.error("Closing connection due to exception.", cause);
-        Attribute<CompletableFuture<String>> futureAttribute = ctx.channel().attr(MintDsChannelAttributeKey.CALLBACK);
-        CompletableFuture<String> future = futureAttribute.getAndRemove();
+        Attribute<CompletableFuture<Response>> futureAttribute = ctx.channel().attr(MintDsClient.FUTURE);
+        CompletableFuture<Response> future = futureAttribute.getAndRemove();
 
         channelPool.release(ctx.channel());
         ctx.close();

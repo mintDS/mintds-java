@@ -14,7 +14,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.util.function.Supplier;
 
-public class MintDsClientInitializer {
+class MintDsClientInitializer {
 
     private final StringDecoder stringDecoder = new StringDecoder(CharsetUtil.UTF_8);
     private final StringEncoder stringEncoder = new StringEncoder(CharsetUtil.UTF_8);
