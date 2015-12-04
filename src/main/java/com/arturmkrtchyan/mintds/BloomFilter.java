@@ -9,6 +9,7 @@ import com.arturmkrtchyan.mintds.protocol.response.EnumResponse;
 import com.arturmkrtchyan.mintds.protocol.response.FailureResponse;
 import com.arturmkrtchyan.mintds.protocol.response.Response;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class BloomFilter {
