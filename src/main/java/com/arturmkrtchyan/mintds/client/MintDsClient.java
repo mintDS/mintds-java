@@ -1,5 +1,9 @@
 package com.arturmkrtchyan.mintds.client;
 
+import com.arturmkrtchyan.mintds.protocol.request.Command;
+import com.arturmkrtchyan.mintds.protocol.request.DataStructure;
+import com.arturmkrtchyan.mintds.protocol.request.DefaultRequest;
+import com.arturmkrtchyan.mintds.protocol.request.Request;
 import com.arturmkrtchyan.mintds.protocol.response.Response;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -76,7 +80,7 @@ public class MintDsClient implements AutoCloseable {
         eventLoopGroup.shutdownGracefully().sync();
     }
 
-    public CompletableFuture<Response> send(final String message) {
+    public CompletableFuture<Response> send(final Request request) {
         // Sends the message to the server.
         CompletableFuture<Response> future = new CompletableFuture<>();
 
@@ -91,7 +95,7 @@ public class MintDsClient implements AutoCloseable {
                         System.err.println("Internal error, completion handler should have been null");
                     }
                     try {
-                        channel.writeAndFlush(message + "\r\n", channel.voidPromise());
+                        channel.writeAndFlush(request.toString() + "\r\n", channel.voidPromise());
                     } catch (Exception e) {
                         CompletableFuture<Response> current = channel.attr(FUTURE).getAndRemove();
                         channelPool.release(channel);
@@ -103,18 +107,6 @@ public class MintDsClient implements AutoCloseable {
         return future;
     }
 
-    protected Channel randomChannel() {
-
-        /*
-        try {
-            return channelPool.acquire().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
-        return null;
-    }
-
     public static void main(String[] args) throws Exception {
 
         MintDsClient client = new MintDsClient.Builder()
@@ -124,7 +116,11 @@ public class MintDsClient implements AutoCloseable {
                 .numberOfThreads(1)
                 .build();
 
-        CompletableFuture<Response> future = client.send("create bloomfilter test");
+        CompletableFuture<Response> future = client.send(new DefaultRequest.Builder()
+                .withCommand(Command.CREATE)
+                .withDataStructure(DataStructure.BloomFilter)
+                .withKey("test")
+                .build());
         System.out.println("aaaa");
         System.out.println(future.get());
 
@@ -134,7 +130,12 @@ public class MintDsClient implements AutoCloseable {
 
         IntStream.range(0, 10000).parallel().forEach(value -> {
             try {
-                CompletableFuture<Response> f = client.send("add bloomfilter test mytestvalue" + value);
+                CompletableFuture<Response> f = client.send(new DefaultRequest.Builder()
+                        .withCommand(Command.ADD)
+                        .withDataStructure(DataStructure.BloomFilter)
+                        .withKey("test")
+                        .withValue("mytestvalue" + value)
+                        .build());
                 futures.add(f);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -27,7 +27,7 @@ public class BloomFilter {
                 .withKey(filter)
                 .build();
 
-        CompletableFuture<Response> future = client.send(request.toString());
+        CompletableFuture<Response> future = client.send(request);
         return future.thenApply(response -> {
             if (response instanceof FailureResponse) {
                 throw new IllegalStateException(((FailureResponse)response).getMessage());
