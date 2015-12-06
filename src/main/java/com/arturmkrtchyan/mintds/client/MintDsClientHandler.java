@@ -22,12 +22,8 @@ class MintDsClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-
-        //System.out.println(msg);
-
         Attribute<CompletableFuture<Response>> futureAttribute = ctx.channel().attr(MintDsClient.FUTURE);
         CompletableFuture<Response> future = futureAttribute.getAndRemove();
-        //System.out.println(ctx.channel().toString() + Thread.currentThread().getName() + " " + msg);
 
         channelPool.release(ctx.channel());
         future.complete(Response.fromString(msg));
