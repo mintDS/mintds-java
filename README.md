@@ -13,13 +13,13 @@ MintDsClient client = new MintDsClient.Builder()
                 .numberOfConnections(100)
                 .numberOfThreads(1)
                 .build();
-BloomFilter filter = new BloomFilter(client);
+BloomFilterStore filterStore = new BloomFilterStore(client);
 
-CompletableFuture<Boolean> createResult = filter.create("myfilter");
-CompletableFuture<Boolean> existsResult = filter.exists("myfilter");
-CompletableFuture<Boolean> addResult = filter.add("myfilter", "myvalue");
-CompletableFuture<Boolean> containsResult = filter.contains("myfilter", "myvalue");
-CompletableFuture<Boolean> dropResult = filter.drop("myfilter");
+CompletableFuture<Boolean> createResult = filterStore.create("myfilter");
+CompletableFuture<Boolean> existsResult = filterStore.exists("myfilter");
+CompletableFuture<Boolean> addResult = filterStore.add("myfilter", "myvalue");
+CompletableFuture<Boolean> containsResult = filterStore.contains("myfilter", "myvalue");
+CompletableFuture<Boolean> dropResult = filterStore.drop("myfilter");
 
 client.close();
 ```
