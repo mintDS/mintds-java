@@ -3,7 +3,7 @@
 mintds-java
 --------------
 
-A Java client library for mintDS.
+Asynchronous Java client library for mintDS.
 
 ### BloomFilter example
 ```java
