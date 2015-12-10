@@ -107,7 +107,7 @@ public class BloomFilterStoreTest {
     }
 
     @Test
-    public void containsWithExistingKeyAndNonExistingValueShouldReturnTrue() throws Exception {
+    public void containsWithExistingKeyAndNonExistingValueShouldReturnFalse() throws Exception {
         final String time = String.valueOf(System.currentTimeMillis());
         filterStore.create("newfilter" + time).get();
         filterStore.add("newfilter" + time, time).get();
