@@ -1,20 +1,35 @@
-package com.arturmkrtchyan.mintds;
+package com.arturmkrtchyan.mintds.client;
 
+import com.arturmkrtchyan.mintds.BloomFilterStore;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class BloomFilterStoreTest extends AbstractStoreTest {
+@Ignore
+public class MintDsClientTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private BloomFilterStore filterStore;
+    private static BloomFilterStore filterStore;
+    private static MintDsClient client;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
+        client = new MintDsClient.Builder()
+                .host("localhost")
+                .port(7657)
+                .numberOfConnections(100)
+                .numberOfThreads(1)
+                .build();
         filterStore = new BloomFilterStore(client);
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        client.close();
     }
 
     @Test
@@ -55,11 +70,11 @@ public class BloomFilterStoreTest extends AbstractStoreTest {
     }
 
     @Test
+    //@Ignore
     public void addWithNonExistingKeyShouldThrowException() throws Exception {
+        expectedException.expectMessage("failure filter doesn't exist");
         final String time = String.valueOf(System.currentTimeMillis());
-        final String filterName = "newfilter" + time;
-        expectedException.expectMessage("failure " + filterName + " doesn't exist");
-        filterStore.add(filterName, time).get();
+        filterStore.add("newfilter" + time, time).get();
     }
 
     @Test
@@ -79,10 +94,9 @@ public class BloomFilterStoreTest extends AbstractStoreTest {
 
     @Test
     public void containsWithNonExistingKeyShouldThrowException() throws Exception {
+        expectedException.expectMessage("failure filter doesn't exist");
         final String time = String.valueOf(System.currentTimeMillis());
-        final String filterName = "newfilter" + time;
-        expectedException.expectMessage("failure " + filterName + " doesn't exist");
-        filterStore.contains(filterName, time).get();
+        filterStore.contains("newfilter" + time, time).get();
     }
 
     @Test
@@ -94,7 +108,7 @@ public class BloomFilterStoreTest extends AbstractStoreTest {
     }
 
     @Test
-    public void containsWithExistingKeyAndNonExistingValueShouldReturnFalse() throws Exception {
+    public void containsWithExistingKeyAndNonExistingValueShouldReturnTrue() throws Exception {
         final String time = String.valueOf(System.currentTimeMillis());
         filterStore.create("newfilter" + time).get();
         filterStore.add("newfilter" + time, time).get();

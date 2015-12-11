@@ -1,6 +1,5 @@
 package com.arturmkrtchyan.mintds;
 
-import com.arturmkrtchyan.mintds.client.MintDsClient;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
@@ -8,29 +7,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
-public class CountMinSketchStoreTest {
+public class CountMinSketchStoreTest extends AbstractStoreTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private static CountMinSketchStore sketchStore;
-    private static MintDsClient client;
 
-    @BeforeClass
-    public static void setUp() {
-        client = new MintDsClient.Builder()
-                .host("localhost")
-                .port(7657)
-                .numberOfConnections(100)
-                .numberOfThreads(1)
-                .build();
+    @Before
+    public void setUp() {
         sketchStore = new CountMinSketchStore(client);
-    }
-
-    @AfterClass
-    public static void tearDown() throws Exception {
-        client.close();
     }
 
     @Test
@@ -39,7 +25,6 @@ public class CountMinSketchStoreTest {
     }
 
     @Test
-    //@Ignore
     public void createWithExistingKeyShouldReturnFalse() throws Exception {
         final long time = System.currentTimeMillis();
         sketchStore.create("newsketch" + time).get();
@@ -72,9 +57,10 @@ public class CountMinSketchStoreTest {
 
     @Test
     public void addWithNonExistingKeyShouldThrowException() throws Exception {
-        expectedException.expectMessage("failure filter doesn't exist");
         final String time = String.valueOf(System.currentTimeMillis());
-        sketchStore.add("newsketch" + time, time).get();
+        final String sketchName = "newsketch" + time;
+        expectedException.expectMessage("failure " + sketchName + " doesn't exist");
+        sketchStore.add(sketchName, time).get();
     }
 
     @Test
@@ -94,9 +80,10 @@ public class CountMinSketchStoreTest {
 
     @Test
     public void countWithNonExistingKeyShouldThrowException() throws Exception {
-        expectedException.expectMessage("failure filter doesn't exist");
         final String time = String.valueOf(System.currentTimeMillis());
-        sketchStore.count("newsketch" + time, time).get();
+        final String sketchName = "newsketch" + time;
+        expectedException.expectMessage("failure " + sketchName + " doesn't exist");
+        sketchStore.count(sketchName, time).get();
     }
 
     @Test

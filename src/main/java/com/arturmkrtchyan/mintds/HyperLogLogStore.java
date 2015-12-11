@@ -72,7 +72,7 @@ public class HyperLogLogStore {
     public CompletableFuture<Integer> count(final String log) {
         final Request request = new DefaultRequest.Builder()
                 .withCommand(Command.COUNT)
-                .withDataStructure(DataStructure.CountMinSketch)
+                .withDataStructure(DataStructure.HyperLogLog)
                 .withKey(log)
                 .build();
 
