@@ -1,8 +1,5 @@
 package com.arturmkrtchyan.mintds.client;
 
-import com.arturmkrtchyan.mintds.protocol.request.Command;
-import com.arturmkrtchyan.mintds.protocol.request.DataStructure;
-import com.arturmkrtchyan.mintds.protocol.request.DefaultRequest;
 import com.arturmkrtchyan.mintds.protocol.request.Request;
 import com.arturmkrtchyan.mintds.protocol.response.Response;
 import io.netty.bootstrap.Bootstrap;
@@ -19,12 +16,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 public class MintDsClient implements AutoCloseable {
 
@@ -105,52 +97,6 @@ public class MintDsClient implements AutoCloseable {
             }
         });
         return future;
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        MintDsClient client = new MintDsClient.Builder()
-                .host("localhost")
-                .port(7657)
-                .numberOfConnections(1024)
-                .numberOfThreads(1)
-                .build();
-
-        CompletableFuture<Response> future = client.send(new DefaultRequest.Builder()
-                .withCommand(Command.CREATE)
-                .withDataStructure(DataStructure.BloomFilter)
-                .withKey("test")
-                .build());
-        System.out.println("aaaa");
-        System.out.println(future.get());
-
-        List<CompletableFuture<Response>> futures =  Collections.synchronizedList(new LinkedList<>());
-
-        long start = System.currentTimeMillis();
-
-        IntStream.range(0, 10000).parallel().forEach(value -> {
-            try {
-                CompletableFuture<Response> f = client.send(new DefaultRequest.Builder()
-                        .withCommand(Command.ADD)
-                        .withDataStructure(DataStructure.BloomFilter)
-                        .withKey("test")
-                        .withValue("mytestvalue" + value)
-                        .build());
-                futures.add(f);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        System.out.println(System.currentTimeMillis() - start);
-
-        CompletableFuture f = CompletableFuture.allOf(futures.toArray(new CompletableFuture[10000]));
-        f.get(30, TimeUnit.SECONDS);
-        long end = System.currentTimeMillis();
-
-        System.out.println(end - start);
-        client.disconnect();
-
     }
 
     public static class Builder {
