@@ -25,11 +25,20 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:git@github.com:mintDS/mintds-java.git</connection>
+        <developerConnection>scm:git:git@github.com:mintDS/mintds-java.git</developerConnection>
+        <url>git@github.com:mintDS/mintds-java.git</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jdk.version>1.8</jdk.version>
+        <skipSigning>true</skipSigning>
+        <skipSource>true</skipSource>
+        <skipJavadoc>true</skipJavadoc>
     </properties>
 
     <dependencies>
@@ -252,6 +261,8 @@
             <id>release</id>
             <properties>
                 <skipSigning>false</skipSigning>
+                <skipSource>false</skipSource>
+                <skipJavadoc>false</skipJavadoc>
             </properties>
         </profile>
     </profiles>
