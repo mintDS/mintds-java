@@ -93,6 +93,7 @@
             <groupId>com.arturmkrtchyan.mintds</groupId>
             <artifactId>mintDS</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
