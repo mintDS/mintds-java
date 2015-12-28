@@ -38,6 +38,7 @@
         <skipSigning>true</skipSigning>
         <skipSource>true</skipSource>
         <skipJavadoc>true</skipJavadoc>
+        <skipAssembly>false</skipAssembly>
     </properties>
 
     <dependencies>
@@ -121,6 +122,7 @@
                     <descriptors>
                         <descriptor>src/main/assembly/jar.xml</descriptor>
                     </descriptors>
+                    <skipAssembly>${skipAssembly}</skipAssembly>
 
                 </configuration>
                 <executions>
@@ -263,6 +265,7 @@
                 <skipSigning>false</skipSigning>
                 <skipSource>false</skipSource>
                 <skipJavadoc>false</skipJavadoc>
+                <skipAssembly>true</skipAssembly>
             </properties>
         </profile>
     </profiles>
