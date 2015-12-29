@@ -91,7 +91,7 @@
 
         <dependency>
             <groupId>com.arturmkrtchyan.mintds</groupId>
-            <artifactId>mintDS</artifactId>
+            <artifactId>mintds</artifactId>
             <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
