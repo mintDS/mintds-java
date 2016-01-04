@@ -21,6 +21,16 @@ public class BloomFilterBenchmark {
         final int messages = Integer.valueOf(System.getProperty("messages", "100000"));
         final int iterations = Integer.valueOf(System.getProperty("iterations", "10"));
 
+
+        System.out.println("--------------------->Options<-----------------");
+        System.out.println("host: " + host);
+        System.out.println("port: " + port);
+        System.out.println("threads: " + threads);
+        System.out.println("connections: " + connections);
+        System.out.println("messages: " + messages);
+        System.out.println("iterations: " + iterations);
+        System.out.println("-----------------------------------------------");
+
         MintDsClient client = new MintDsClient.Builder()
                 .host(host)
                 .port(port)
